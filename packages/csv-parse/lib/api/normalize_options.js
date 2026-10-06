@@ -2,11 +2,18 @@ import { normalize_columns_array } from "./normalize_columns_array.js";
 import { CsvError } from "./CsvError.js";
 import { underscore } from "../utils/underscore.js";
 import { is_object } from "../utils/is_object.js";
+import { normalize_dialect } from "./dialects.js";
 
 const normalize_options = function (opts) {
   const options = {};
+  // Apply the dialect preset, explicit user options take precedence
+  const dialect_options = normalize_dialect(opts);
+  for (const opt in dialect_options) {
+    options[underscore(opt)] = dialect_options[opt];
+  }
   // Merge with user options
   for (const opt in opts) {
+    if (opt === "dialect") continue;
     options[underscore(opt)] = opts[opt];
   }
   // Normalize option `encoding`

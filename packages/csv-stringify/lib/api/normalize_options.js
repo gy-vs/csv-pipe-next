@@ -1,11 +1,19 @@
 import { CsvError } from "./CsvError.js";
 import { normalize_columns } from "./normalize_columns.js";
 import { underscore } from "../utils/underscore.js";
+import { normalize_dialect } from "./dialects.js";
 
 const normalize_options = function (opts) {
+  // Apply the dialect preset, explicit user options take precedence
+  const [errDialect, dialect_options] = normalize_dialect(opts);
+  if (errDialect !== undefined) return [errDialect];
   const options = {};
+  for (const opt in dialect_options) {
+    options[underscore(opt)] = dialect_options[opt];
+  }
   // Merge with user options
   for (const opt in opts) {
+    if (opt === "dialect") continue;
     options[underscore(opt)] = opts[opt];
   }
   // Normalize option `bom`

@@ -254,6 +254,20 @@ describe("API Types", function () {
       options.delimiter = Buffer.from(":");
     });
 
+    it("dialect", function () {
+      parse("", { dialect: "excel" });
+      parse("", { dialect: "excel-tab" });
+      parse("", { dialect: "unix" });
+      parse("", { dialect: "rfc4180" });
+      parse("", { dialect: "excel", columns: true });
+      // @ts-expect-error dialect is a literal union, not any string
+      const invalidString = () => parse("", { dialect: "excelx" });
+      // @ts-expect-error dialect is a literal union, not a number
+      const invalidNumber = () => parse("", { dialect: 42 });
+      invalidString;
+      invalidNumber;
+    });
+
     it("escape", function () {
       const options: Options = {};
       options.escape = ":";

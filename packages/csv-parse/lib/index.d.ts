@@ -99,6 +99,14 @@ export interface OptionDelimiterAuto {
   size: number;
 }
 
+/**
+ * Named set of format conventions shared with csv-stringify. A dialect
+ * configures the delimiter, quote and record delimiter (and the BOM for
+ * Excel-oriented dialects); records written with a dialect can be read
+ * back with the dialect of the same name.
+ */
+export type Dialect = "excel" | "excel-tab" | "unix" | "rfc4180";
+
 export interface OptionsNormalized<T = string[], U = T> {
   auto_parse?: boolean | CastingFunction;
   auto_parse_date?: boolean | CastingDateFunction;
@@ -333,6 +341,11 @@ export interface Options<T = string[], U = T> {
    */
   delimiter_auto?: boolean | Partial<OptionsNormalized["delimiter_auto"]>;
   /**
+   * Name of a predefined set of format conventions shared with
+   * csv-stringify. Explicit options take precedence over the dialect.
+   */
+  dialect?: Dialect;
+  /**
    * Set the source and destination encoding, a value of `null` returns buffer instead of strings.
    */
   encoding?: OptionsNormalized["encoding"] | boolean | undefined;
@@ -486,6 +499,7 @@ export type CsvErrorCode =
   | "CSV_INVALID_OPTION_COLUMNS"
   | "CSV_INVALID_OPTION_COMMENT"
   | "CSV_INVALID_OPTION_DELIMITER"
+  | "CSV_INVALID_OPTION_DIALECT"
   | "CSV_INVALID_OPTION_GROUP_COLUMNS_BY_NAME"
   | "CSV_INVALID_OPTION_ON_RECORD"
   | "CSV_MAX_RECORD_SIZE"

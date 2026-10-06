@@ -12,6 +12,14 @@ export type RecordDelimiter =
   | "ascii"
   | "unicode";
 
+/**
+ * Named set of format conventions shared with csv-parse. A dialect
+ * configures the delimiter, quote and record delimiter (and the BOM for
+ * Excel-oriented dialects); records written with a dialect can be read
+ * back with the dialect of the same name.
+ */
+export type Dialect = "excel" | "excel-tab" | "unix" | "rfc4180";
+
 export type CastReturnObject = { value: string } & Pick<
   Options,
   | "delimiter"
@@ -158,6 +166,11 @@ export interface Options extends stream.TransformOptions {
    */
   delimiter?: string | Buffer;
   /**
+   * Name of a predefined set of format conventions shared with csv-parse.
+   * Explicit options take precedence over the dialect.
+   */
+  dialect?: Dialect;
+  /**
    * Add the value of "options.RecordDelimiter" on the last line, default to true.
    */
   eof?: boolean;
@@ -174,6 +187,10 @@ export interface Options extends stream.TransformOptions {
    */
   header_as_comment?: boolean | Buffer | string;
   /**
+   * Alias of `header_as_comment`.
+   */
+  headerAsComment?: boolean | Buffer | string;
+  /**
    * The quote characters, defaults to the ", an empty quote value will preserve the original field.
    */
   quote?: string | Buffer | boolean;
@@ -187,13 +204,25 @@ export interface Options extends stream.TransformOptions {
    */
   quoted_empty?: boolean;
   /**
+   * Alias of `quoted_empty`.
+   */
+  quotedEmpty?: boolean;
+  /**
    * String or RegExp, no default, quote all fields matching a regular expression.
    */
   quoted_match?: null | string | RegExp | (string | RegExp)[];
   /**
+   * Alias of `quoted_match`.
+   */
+  quotedMatch?: null | string | RegExp | (string | RegExp)[];
+  /**
    * Boolean, default to false, quote all fields of type string even if not required.
    */
   quoted_string?: boolean;
+  /**
+   * Alias of `quoted_string`.
+   */
+  quotedString?: boolean;
   /**
    * String used to delimit record rows or a special value
    * special values are 'unix', 'mac', 'windows', 'ascii', 'unicode'
@@ -201,9 +230,17 @@ export interface Options extends stream.TransformOptions {
    */
   record_delimiter?: RecordDelimiter;
   /**
+   * Alias of `record_delimiter`.
+   */
+  recordDelimiter?: RecordDelimiter;
+  /**
    * Boolean, default to false, if true, fields that begin with `=`, `+`, `-`, `@`, `\t`, or `\r` will be prepended with a `'` to protect against csv injection attacks
    */
   escape_formulas?: boolean;
+  /**
+   * Alias of `escape_formulas`.
+   */
+  escapeFormulas?: boolean;
 }
 
 export class Stringifier extends stream.Transform {

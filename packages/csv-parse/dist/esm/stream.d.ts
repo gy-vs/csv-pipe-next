@@ -9,6 +9,7 @@ export {
   CastingFunction,
   CastingDateFunction,
   ColumnOption,
+  Dialect,
   Options,
   OptionsNormalized,
   OptionsWithColumns,
