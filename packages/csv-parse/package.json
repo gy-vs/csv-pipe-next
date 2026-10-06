@@ -58,6 +58,7 @@
     "@types/node": "^26.0.1",
     "csv-generate": "^4.6.1",
     "csv-spectrum": "^2.0.0",
+    "csv-stringify": "^6.8.3",
     "dedent": "^1.7.2",
     "each": "^2.7.2",
     "mocha": "^11.7.6",

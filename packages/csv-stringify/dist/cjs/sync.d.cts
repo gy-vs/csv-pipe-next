@@ -7,6 +7,7 @@ export { stringify };
 export {
   RecordDelimiter,
   Cast,
+  Dialect,
   PlainObject,
   Input,
   ColumnOption,

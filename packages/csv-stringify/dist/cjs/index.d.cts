@@ -12,6 +12,13 @@ export type RecordDelimiter =
   | "ascii"
   | "unicode";
 
+/**
+ * Names of the supported dialects. A dialect is a named preset of options
+ * shared with the `csv-parse` package, so that the same name describes
+ * the same format when writing and when reading a CSV document.
+ */
+export type Dialect = "excel" | "excel-tab" | "unix" | "rfc4180";
+
 export type CastReturnObject = { value: string } & Pick<
   Options,
   | "delimiter"
@@ -71,6 +78,12 @@ export interface OptionsNormalized extends stream.TransformOptions {
    * see the "header" option on how to print columns names on the first line
    */
   columns: ReadonlyArray<string | ColumnOption> | PlainObject<string>;
+  /**
+   * Name of a supported dialect, a preset combining multiple options such as
+   * `delimiter`, `quote`, `record_delimiter` and `bom`. Options explicitly
+   * provided take precedence over the dialect values.
+   */
+  dialect?: Dialect;
   /**
    * Set the field delimiter, one character only, defaults to a comma.
    */
@@ -153,6 +166,12 @@ export interface Options extends stream.TransformOptions {
    * see the "header" option on how to print columns names on the first line
    */
   columns?: ReadonlyArray<string | ColumnOption> | PlainObject<string>;
+  /**
+   * Name of a supported dialect, a preset combining multiple options such as
+   * `delimiter`, `quote`, `record_delimiter` and `bom`. Options explicitly
+   * provided take precedence over the dialect values.
+   */
+  dialect?: Dialect;
   /**
    * Set the field delimiter, one character only, defaults to a comma.
    */

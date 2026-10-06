@@ -228,6 +228,48 @@ const init_state = function (options) {
   };
 };
 
+// Named dialects, each associating a name with a set of option values
+// shared with the `csv-stringify` package, so that the same name describes
+// the same format when writing and when reading a CSV document. Dialects
+// are presets: an option explicitly provided by the user always takes
+// precedence over the value defined by the dialect.
+const dialects = {
+  // Excel with comma separator: UTF-8 BOM, comma delimiter,
+  // double quotes and CRLF record delimiters
+  excel: {
+    bom: true,
+    delimiter: ",",
+    escape: '"',
+    quote: '"',
+    record_delimiter: "\r\n",
+  },
+  // Excel with tab separator: UTF-8 BOM, tab delimiter,
+  // double quotes and CRLF record delimiters
+  "excel-tab": {
+    bom: true,
+    delimiter: "\t",
+    escape: '"',
+    quote: '"',
+    record_delimiter: "\r\n",
+  },
+  // Unix conventions: comma delimiter, double quotes,
+  // every field quoted and LF record delimiters
+  unix: {
+    delimiter: ",",
+    escape: '"',
+    quote: '"',
+    record_delimiter: "\n",
+  },
+  // Strict RFC 4180: comma delimiter, double quotes
+  // and CRLF record delimiters
+  rfc4180: {
+    delimiter: ",",
+    escape: '"',
+    quote: '"',
+    record_delimiter: "\r\n",
+  },
+};
+
 const underscore = function (str) {
   return str.replace(/([A-Z])/g, function (_, match) {
     return "_" + match.toLowerCase();
@@ -239,6 +281,30 @@ const normalize_options = function (opts) {
   // Merge with user options
   for (const opt in opts) {
     options[underscore(opt)] = opts[opt];
+  }
+  // Normalize option `dialect`
+  // A dialect is a named preset of options; options explicitly
+  // provided by the user take precedence over the dialect values.
+  if (options.dialect !== undefined && options.dialect !== null) {
+    const dialect = dialects[options.dialect];
+    if (dialect === undefined) {
+      throw new CsvError(
+        "CSV_INVALID_OPTION_DIALECT",
+        [
+          "Invalid option dialect:",
+          `dialect must be one of ${Object.keys(dialects)
+            .map((name) => JSON.stringify(name))
+            .join(", ")},`,
+          `got ${JSON.stringify(options.dialect)}`,
+        ],
+        options,
+      );
+    }
+    for (const name in dialect) {
+      if (options[name] === undefined) {
+        options[name] = dialect[name];
+      }
+    }
   }
   // Normalize option `encoding`
   // Note: defined first because other options depends on it

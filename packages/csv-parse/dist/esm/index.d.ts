@@ -99,6 +99,13 @@ export interface OptionDelimiterAuto {
   size: number;
 }
 
+/**
+ * Names of the supported dialects. A dialect is a named preset of options
+ * shared with the `csv-stringify` package, so that the same name describes
+ * the same format when writing and when reading a CSV document.
+ */
+export type Dialect = "excel" | "excel-tab" | "unix" | "rfc4180";
+
 export interface OptionsNormalized<T = string[], U = T> {
   auto_parse?: boolean | CastingFunction;
   auto_parse_date?: boolean | CastingDateFunction;
@@ -145,6 +152,12 @@ export interface OptionsNormalized<T = string[], U = T> {
    * option require the activation of comments.
    */
   comment_no_infix: boolean;
+  /**
+   * Name of a supported dialect, a preset combining multiple options such as
+   * `delimiter`, `quote`, `record_delimiter` and `bom`. Options explicitly
+   * provided take precedence over the dialect values.
+   */
+  dialect?: Dialect;
   /**
    * Set the field delimiter. One character only, defaults to comma.
    */
@@ -325,6 +338,12 @@ export interface Options<T = string[], U = T> {
    */
   comment_no_infix?: OptionsNormalized["comment_no_infix"] | null;
   /**
+   * Name of a supported dialect, a preset combining multiple options such as
+   * `delimiter`, `quote`, `record_delimiter` and `bom`. Options explicitly
+   * provided take precedence over the dialect values.
+   */
+  dialect?: Dialect;
+  /**
    * Set the field delimiter. One character only, defaults to comma.
    */
   delimiter?: OptionsNormalized["delimiter"] | string | string[] | Buffer;
@@ -486,6 +505,7 @@ export type CsvErrorCode =
   | "CSV_INVALID_OPTION_COLUMNS"
   | "CSV_INVALID_OPTION_COMMENT"
   | "CSV_INVALID_OPTION_DELIMITER"
+  | "CSV_INVALID_OPTION_DIALECT"
   | "CSV_INVALID_OPTION_GROUP_COLUMNS_BY_NAME"
   | "CSV_INVALID_OPTION_ON_RECORD"
   | "CSV_MAX_RECORD_SIZE"

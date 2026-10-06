@@ -1,5 +1,6 @@
 import { normalize_columns_array } from "./normalize_columns_array.js";
 import { CsvError } from "./CsvError.js";
+import { dialects } from "../utils/dialects.js";
 import { underscore } from "../utils/underscore.js";
 import { is_object } from "../utils/is_object.js";
 
@@ -8,6 +9,30 @@ const normalize_options = function (opts) {
   // Merge with user options
   for (const opt in opts) {
     options[underscore(opt)] = opts[opt];
+  }
+  // Normalize option `dialect`
+  // A dialect is a named preset of options; options explicitly
+  // provided by the user take precedence over the dialect values.
+  if (options.dialect !== undefined && options.dialect !== null) {
+    const dialect = dialects[options.dialect];
+    if (dialect === undefined) {
+      throw new CsvError(
+        "CSV_INVALID_OPTION_DIALECT",
+        [
+          "Invalid option dialect:",
+          `dialect must be one of ${Object.keys(dialects)
+            .map((name) => JSON.stringify(name))
+            .join(", ")},`,
+          `got ${JSON.stringify(options.dialect)}`,
+        ],
+        options,
+      );
+    }
+    for (const name in dialect) {
+      if (options[name] === undefined) {
+        options[name] = dialect[name];
+      }
+    }
   }
   // Normalize option `encoding`
   // Note: defined first because other options depends on it
